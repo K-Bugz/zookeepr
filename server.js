@@ -1,11 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const { animals } = require('./data/animals');
+// npm imports 
+const fs = require('fs'); // fs is for filewriting 
+const path = require('path'); // we only use the join method that takes in args as strings and returns one path    RETURNS: path.join('/foo', 'bar', 'baz/asdf', 'quux', '..');     Returns: '/foo/bar/baz/asdf'
 
-const PORT = process.env.PORT || 3001;
+const express = require('express'); // Is a common npm server creator
+const { animals } = require('./data/animals'); // Our JSON data that we import 
+
+const PORT = process.env.PORT || 3001; // So process.env.PORT || 3000 means: whatever is in the environment variable PORT, or 3000 if there's nothing. 
 const app = express();
 
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -95,6 +98,23 @@ app.post('/api/animals', (req, res) => {
         res.json(animal);
     }
 });
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
 app.listen(PORT, () => {
     console.log(`API server now on port ${PORT}!`);
 });
